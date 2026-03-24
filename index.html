@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+        <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>موقع الأغاني - 37 أغنية Bass Boosted</title>
+    <title>مكتبة الـ 37 أغنية - النسخة الكاملة</title>
     <style>
         :root {
             --primary: #1db954;
@@ -15,19 +15,19 @@
         body {
             background-color: var(--bg);
             color: var(--text);
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
             margin: 0;
-            padding-bottom: 160px;
+            padding-bottom: 180px; /* مساحة للمشغل تحت */
             text-align: center;
         }
 
-        header { padding: 40px 20px; background: linear-gradient(#1db95444, #121212); }
+        header { padding: 30px; background: linear-gradient(#1db95433, #121212); }
         h1 { color: var(--primary); margin: 0; }
-        
+
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 10px;
             padding: 20px;
             max-width: 1100px;
             margin: 0 auto;
@@ -36,7 +36,7 @@
         .card {
             background: var(--card);
             padding: 20px;
-            border-radius: 12px;
+            border-radius: 10px;
             cursor: pointer;
             border: 1px solid #333;
             transition: 0.3s;
@@ -45,33 +45,35 @@
         .card:hover, .card.active {
             border-color: var(--primary);
             background: #282828;
-            transform: scale(1.05);
         }
 
+        /* بار المشغل السفلي */
         .player-bar {
             position: fixed;
             bottom: 0; width: 100%;
             background: #000;
-            border-top: 3px solid var(--primary);
-            padding: 20px 0;
-            z-index: 999;
+            border-top: 2px solid var(--primary);
+            padding: 15px 0;
+            z-index: 1000;
         }
 
         #track-info { font-weight: bold; color: var(--primary); margin-bottom: 10px; }
-        
-        .progress-container {
-            width: 80%; max-width: 600px;
-            height: 6px; background: #333;
-            margin: 10px auto; border-radius: 10px;
+
+        /* شريط التقدم التفاعلي (التقديم والتأخير) */
+        .progress-wrapper {
+            width: 90%; max-width: 600px;
+            height: 8px; background: #333;
+            margin: 10px auto; border-radius: 5px;
+            cursor: pointer; position: relative;
         }
 
         #progress-bar {
             height: 100%; background: var(--primary);
-            width: 0%; border-radius: 10px;
-            box-shadow: 0 0 10px var(--primary);
+            width: 0%; border-radius: 5px;
+            pointer-events: none;
         }
 
-        .controls { display: flex; justify-content: center; gap: 20px; align-items: center; }
+        .controls { display: flex; justify-content: center; gap: 25px; align-items: center; }
         .btn {
             background: none; border: none; color: white;
             font-size: 30px; cursor: pointer;
@@ -79,16 +81,17 @@
 
         .play-btn {
             background: var(--primary); color: black;
-            width: 60px; height: 60px; border-radius: 50%;
+            width: 55px; height: 55px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
+            font-size: 22px; font-weight: bold;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>مكتبة الـ 37 أغنية</h1>
-        <p>نظام Bass Boost مفعل - تشغيل كامل للأغاني</p>
+        <h1>مكتبتي الموسيقية</h1>
+        <p>37 أغنية - تحكم كامل بالتقديم والتأخير</p>
     </header>
 
     <div class="grid">
@@ -132,8 +135,12 @@
     </div>
 
     <div class="player-bar">
-        <div id="track-info">جاهز للتشغيل..</div>
-        <div class="progress-container"><div id="progress-bar"></div></div>
+        <div id="track-info">جاهز للتشغيل</div>
+        
+        <div class="progress-wrapper" onclick="seek(event)">
+            <div id="progress-bar"></div>
+        </div>
+
         <div class="controls">
             <button class="btn" onclick="prevTrack()">⏮</button>
             <button class="btn play-btn" id="playBtn" onclick="togglePlay()">▶</button>
@@ -141,63 +148,66 @@
         </div>
     </div>
 
-    <audio id="mainAudio" crossorigin="anonymous"></audio>
+    <audio id="mainAudio"></audio>
 
     <script>
         const audio = document.getElementById('mainAudio');
         const playBtn = document.getElementById('playBtn');
-        const prog = document.getElementById('progress-bar');
+        const progBar = document.getElementById('progress-bar');
         const info = document.getElementById('track-info');
         
         let currentIdx = 0;
-        const totalSongs = 37; // التعديل ليكون 37 أغنية
-        let audioCtx, source, biquadFilter;
+        const totalSongs = 37;
 
-        function setupBass() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                source = audioCtx.createMediaElementSource(audio);
-                biquadFilter = audioCtx.createBiquadFilter();
-                source.connect(biquadFilter);
-                biquadFilter.connect(audioCtx.destination);
-                biquadFilter.type = "lowshelf";
-                biquadFilter.frequency.value = 200;
-                biquadFilter.gain.value = 18;
-            }
+        // وظيفة التقديم والتأخير بالماوس
+        function seek(event) {
+            if (!audio.src) return;
+            const rect = event.currentTarget.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const width = rect.width;
+            const percentage = x / width;
+            audio.currentTime = percentage * audio.duration;
         }
 
         function loadTrack(n) {
-            setupBass();
             currentIdx = n;
             audio.src = `song${n}.mp3`;
-            info.innerText = "شغال الآن: أغنية " + n;
+            info.innerText = "أغنية رقم " + n;
+            
             document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
             document.getElementById('c'+n).classList.add('active');
+            
             audio.play();
             playBtn.innerText = "⏸";
         }
 
         function togglePlay() {
             if(!audio.src) { loadTrack(1); return; }
-            if(audio.paused) { audio.play(); playBtn.innerText = "⏸"; setupBass(); }
-            else { audio.pause(); playBtn.innerText = "▶"; }
+            if(audio.paused) {
+                audio.play();
+                playBtn.innerText = "⏸";
+            } else {
+                audio.pause();
+                playBtn.innerText = "▶";
+            }
         }
 
-        function nextTrack() { 
-            let n = currentIdx + 1; 
-            if(n > totalSongs) n = 1; 
-            loadTrack(n); 
+        function nextTrack() {
+            let n = currentIdx + 1;
+            if(n > totalSongs) n = 1;
+            loadTrack(n);
         }
 
-        function prevTrack() { 
-            let n = currentIdx - 1; 
-            if(n < 1) n = totalSongs; 
-            loadTrack(n); 
+        function prevTrack() {
+            let n = currentIdx - 1;
+            if(n < 1) n = totalSongs;
+            loadTrack(n);
         }
 
         audio.ontimeupdate = () => {
             if(audio.duration) {
-                prog.style.width = (audio.currentTime / audio.duration * 100) + "%";
+                const perc = (audio.currentTime / audio.duration) * 100;
+                progBar.style.width = perc + "%";
             }
         };
 
