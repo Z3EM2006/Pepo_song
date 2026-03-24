@@ -2,23 +2,94 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>موقع الـ 50 أغنية (1:45 دقيقة)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقع الأغاني - 37 أغنية Bass Boosted</title>
     <style>
-        body { background: #121212; color: white; font-family: sans-serif; padding-bottom: 150px; text-align: center; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; padding: 20px; }
-        .card { background: #181818; padding: 15px; border-radius: 8px; cursor: pointer; border: 1px solid #333; }
-        .card:hover, .card.active { border-color: #1db954; background: #282828; }
-        .player-bar { position: fixed; bottom: 0; width: 100%; background: #000; border-top: 2px solid #1db954; padding: 20px 0; }
-        .controls { display: flex; justify-content: center; gap: 15px; margin-top: 10px; }
-        button { background: #1db954; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; }
-        #progress-bg { width: 80%; height: 5px; background: #333; margin: 10px auto; border-radius: 5px; }
-        #progress-bar { width: 0%; height: 100%; background: #1db954; transition: 0.1s; }
+        :root {
+            --primary: #1db954;
+            --bg: #121212;
+            --card: #181818;
+            --text: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding-bottom: 160px;
+            text-align: center;
+        }
+
+        header { padding: 40px 20px; background: linear-gradient(#1db95444, #121212); }
+        h1 { color: var(--primary); margin: 0; }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            padding: 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            border: 1px solid #333;
+            transition: 0.3s;
+        }
+
+        .card:hover, .card.active {
+            border-color: var(--primary);
+            background: #282828;
+            transform: scale(1.05);
+        }
+
+        .player-bar {
+            position: fixed;
+            bottom: 0; width: 100%;
+            background: #000;
+            border-top: 3px solid var(--primary);
+            padding: 20px 0;
+            z-index: 999;
+        }
+
+        #track-info { font-weight: bold; color: var(--primary); margin-bottom: 10px; }
+        
+        .progress-container {
+            width: 80%; max-width: 600px;
+            height: 6px; background: #333;
+            margin: 10px auto; border-radius: 10px;
+        }
+
+        #progress-bar {
+            height: 100%; background: var(--primary);
+            width: 0%; border-radius: 10px;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        .controls { display: flex; justify-content: center; gap: 20px; align-items: center; }
+        .btn {
+            background: none; border: none; color: white;
+            font-size: 30px; cursor: pointer;
+        }
+
+        .play-btn {
+            background: var(--primary); color: black;
+            width: 60px; height: 60px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+        }
     </style>
 </head>
 <body>
 
-    <h1>مكتبة الـ 50 أغنية</h1>
-    <p>سيتم النقل تلقائياً كل 1:45 دقيقة</p>
+    <header>
+        <h1>مكتبة الـ 37 أغنية</h1>
+        <p>نظام Bass Boost مفعل - تشغيل كامل للأغاني</p>
+    </header>
 
     <div class="grid">
         <div class="card" id="c1" onclick="loadTrack(1)">🎵 أغنية 1</div>
@@ -58,61 +129,78 @@
         <div class="card" id="c35" onclick="loadTrack(35)">🎵 أغنية 35</div>
         <div class="card" id="c36" onclick="loadTrack(36)">🎵 أغنية 36</div>
         <div class="card" id="c37" onclick="loadTrack(37)">🎵 أغنية 37</div>
-        <div class="card" id="c38" onclick="loadTrack(38)">🎵 أغنية 38</div>
-        <div class="card" id="c39" onclick="loadTrack(39)">🎵 أغنية 39</div>
-        <div class="card" id="c40" onclick="loadTrack(40)">🎵 أغنية 40</div>
-        <div class="card" id="c41" onclick="loadTrack(41)">🎵 أغنية 41</div>
-        <div class="card" id="c42" onclick="loadTrack(42)">🎵 أغنية 42</div>
-        <div class="card" id="c43" onclick="loadTrack(43)">🎵 أغنية 43</div>
-        <div class="card" id="c44" onclick="loadTrack(44)">🎵 أغنية 44</div>
-        <div class="card" id="c45" onclick="loadTrack(45)">🎵 أغنية 45</div>
-        <div class="card" id="c46" onclick="loadTrack(46)">🎵 أغنية 46</div>
-        <div class="card" id="c47" onclick="loadTrack(47)">🎵 أغنية 47</div>
-        <div class="card" id="c48" onclick="loadTrack(48)">🎵 أغنية 48</div>
-        <div class="card" id="c49" onclick="loadTrack(49)">🎵 أغنية 49</div>
-        <div class="card" id="c50" onclick="loadTrack(50)">🎵 أغنية 50</div>
     </div>
 
     <div class="player-bar">
-        <div id="song-title">اختر أغنية..</div>
-        <div id="progress-bg"><div id="progress-bar"></div></div>
+        <div id="track-info">جاهز للتشغيل..</div>
+        <div class="progress-container"><div id="progress-bar"></div></div>
         <div class="controls">
-            <button onclick="prevTrack()">السابق</button>
-            <button id="playBtn" onclick="togglePlay()">تشغيل</button>
-            <button onclick="nextTrack()">التالي</button>
+            <button class="btn" onclick="prevTrack()">⏮</button>
+            <button class="btn play-btn" id="playBtn" onclick="togglePlay()">▶</button>
+            <button class="btn" onclick="nextTrack()">⏭</button>
         </div>
     </div>
 
-    <audio id="mainAudio"></audio>
+    <audio id="mainAudio" crossorigin="anonymous"></audio>
 
     <script>
         const audio = document.getElementById('mainAudio');
-        const bar = document.getElementById('progress-bar');
-        const limit = 105; // دقيقة و45 ثانية بالثواني
+        const playBtn = document.getElementById('playBtn');
+        const prog = document.getElementById('progress-bar');
+        const info = document.getElementById('track-info');
+        
         let currentIdx = 0;
+        const totalSongs = 37; // التعديل ليكون 37 أغنية
+        let audioCtx, source, biquadFilter;
+
+        function setupBass() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                source = audioCtx.createMediaElementSource(audio);
+                biquadFilter = audioCtx.createBiquadFilter();
+                source.connect(biquadFilter);
+                biquadFilter.connect(audioCtx.destination);
+                biquadFilter.type = "lowshelf";
+                biquadFilter.frequency.value = 200;
+                biquadFilter.gain.value = 18;
+            }
+        }
 
         function loadTrack(n) {
+            setupBass();
             currentIdx = n;
-            audio.src = `song${n}.mp3`; // هنا بيتم سحب الملف song1.mp3 وهكذا
-            document.getElementById('song-title').innerText = "شغال دلوقتي: أغنية " + n;
+            audio.src = `song${n}.mp3`;
+            info.innerText = "شغال الآن: أغنية " + n;
             document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
             document.getElementById('c'+n).classList.add('active');
             audio.play();
-            document.getElementById('playBtn').innerText = "إيقاف";
+            playBtn.innerText = "⏸";
         }
 
         function togglePlay() {
             if(!audio.src) { loadTrack(1); return; }
-            audio.paused ? (audio.play(), document.getElementById('playBtn').innerText = "إيقاف") : (audio.pause(), document.getElementById('playBtn').innerText = "تشغيل");
+            if(audio.paused) { audio.play(); playBtn.innerText = "⏸"; setupBass(); }
+            else { audio.pause(); playBtn.innerText = "▶"; }
         }
 
-        function nextTrack() { let n = currentIdx + 1; if(n > 50) n = 1; loadTrack(n); }
-        function prevTrack() { let n = currentIdx - 1; if(n < 1) n = 50; loadTrack(n); }
+        function nextTrack() { 
+            let n = currentIdx + 1; 
+            if(n > totalSongs) n = 1; 
+            loadTrack(n); 
+        }
+
+        function prevTrack() { 
+            let n = currentIdx - 1; 
+            if(n < 1) n = totalSongs; 
+            loadTrack(n); 
+        }
 
         audio.ontimeupdate = () => {
-            if(audio.currentTime >= limit) nextTrack(); // النقل التلقائي عند 1:45
-            bar.style.width = (audio.currentTime / limit * 100) + "%";
+            if(audio.duration) {
+                prog.style.width = (audio.currentTime / audio.duration * 100) + "%";
+            }
         };
+
         audio.onended = nextTrack;
     </script>
 </body>
